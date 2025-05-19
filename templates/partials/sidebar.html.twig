@@ -1,0 +1,27 @@
+<aside class="w-64 bg-white shadow-md p-4 flex flex-col space-y-6 min-h-screen">
+    <div class="text-2xl font-semibold text-gray-800">
+        MonProjet
+    </div>
+
+    <nav class="flex flex-col space-y-3 text-gray-700">
+        <a href="{{ path('app_dashboard') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
+            🏠 Dashboard
+        </a>
+        <a href="{{ path('app_profile') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
+            👤 Profil
+        </a>
+        <a href="{{ path('app_admin') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
+            🛠️ Administration
+        </a>
+        <a href="{{ path('app_chat_bot') }}" class="mt-auto hover:bg-gray-100 rounded px-3 py-2 transition">
+            🐌 GaryBot
+        </a>
+        <a href="{{ path('app_vehicle') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
+            🚗 Mes véhicules
+        </a>
+        <a href="{{ path('app_logout') }}" class="mt-auto hover:bg-red-100 text-red-600 rounded px-3 py-2 transition">
+            🔓 Déconnexion
+        </a>
+
+    </nav>
+</aside>

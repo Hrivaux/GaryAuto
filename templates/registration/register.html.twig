@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Créer un compte</h1>
+
+        {% if form_errors(registrationForm) %}
+            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                {{ form_errors(registrationForm) }}
+            </div>
+        {% endif %}
+
+        {{ form_start(registrationForm) }}
+
+        <div class="mb-4">
+            {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300'}}) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300'}}) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'mr-2'}}) }}
+            {{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'text-sm text-gray-700'}}) }}
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+            S’inscrire
+        </button>
+
+        {{ form_end(registrationForm) }}
+
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600">Déjà inscrit ?
+                <a href="{{ path('app_login') }}" class="text-blue-600 hover:underline">Se connecter</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
