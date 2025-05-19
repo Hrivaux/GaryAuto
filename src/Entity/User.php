@@ -7,7 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -17,6 +20,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    private ?string $username = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
@@ -32,6 +38,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $avatarName = null;
+
+    // Cette propriété n’est pas mappée en BDD :
+    #[Vich\UploadableField(mapping: 'user_avatar', fileNameProperty: 'avatarName')]
+    private ?File $avatarFile = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    // getter/setter pour avatarName
+    public function getAvatarName(): ?string
+    {
+        return $this->avatarName;
+    }
+    public function setAvatarName(?string $name): self
+    {
+        $this->avatarName = $name;
+        return $this;
+    }
+
+    // getter/setter pour avatarFile
+    public function setAvatarFile(?File $file = null): self
+    {
+        $this->avatarFile = $file;
+        if (null !== $file) {
+            // force la mise à jour pour Doctrine :
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    // getter/setter pour updatedAt
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(\DateTimeInterface $dt): self
+    {
+        $this->updatedAt = $dt;
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -104,5 +157,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+        return $this;
     }
 }
