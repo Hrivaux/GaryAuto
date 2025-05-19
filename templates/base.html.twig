@@ -1,17 +1,133 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Mon Projet{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex bg-gray-100 min-h-screen">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Mon Projet
+			{% endblock %}
+		</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body class="flex bg-gray-100 min-h-screen">
 
-    {% include 'partials/sidebar.html.twig' %}
+		{% include 'partials/sidebar.html.twig' %}
 
-    <main class="flex-1 p-8">
-        {% block body %}{% endblock %}
-    </main>
+		<main class="flex-1 p-8"> {% block body %}{% endblock %}
 
-</body>
+			{% if app.request.pathinfo != '/garyBot' %}
+                <!-- Dépendances Alpine.js et GSAP -->
+                <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+
+                <!-- Composant Chatbot -->
+                <div x-data="chatbotComponent()" x-init="init()" class="fixed bottom-6 right-6 z-50">
+
+                <!-- Bouton Bulle 💬 -->
+                <button
+                    x-ref="bubble"
+                    style="display: flex;"
+                    @click="openChat()"
+                    class="bg-gradient-to-br from-blue-600 to-blue-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-105 transition"
+                    aria-label="Ouvrir le chatbot"
+                >
+                    💬
+                </button>
+
+                <!-- Fenêtre Chatbot -->
+                <div
+                    x-ref="panel"
+                    style="display: none;"
+                    class="mt-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
+                >
+                    <!-- En-tête -->
+                    <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                    <span class="font-semibold text-gray-800">GaryBot</span>
+                    <button @click="closeChat()" class="text-red-500 hover:text-red-700 text-lg font-bold">
+                        &times;
+                    </button>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="p-4 h-64 overflow-y-auto text-sm space-y-2">
+                    <div class="bg-gray-100 p-2 rounded-xl w-fit max-w-xs">
+                       Hello Je suis le GaryBot, comment puis-je vous aider ?
+                    </div>
+                    </div>
+
+                    <!-- Zone d'input -->
+                    <div class="flex items-center border-t p-2">
+                    <input
+                        type="text"
+                        placeholder="Votre message..."
+                        class="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <button class="ml-2 text-blue-600 hover:text-blue-800 text-xl">➤</button>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Alpine + GSAP Script -->
+                <script>
+                function chatbotComponent() {
+                    return {
+                    open: false,
+                    init() {
+                        this.panel = this.$refs.panel;
+                        this.bubble = this.$refs.bubble;
+                    },
+                    openChat() {
+                    this.open = true;
+                    this.bubble.style.display = "none";
+
+                    gsap.fromTo(this.panel, { scale: 0.9, opacity: 0 }, {
+                        scale: 1,
+                        opacity: 1,
+                        duration: 0.4,
+                        ease: "power2.out",
+                        onStart: () => {
+                        this.panel.style.display = "block";
+                        }
+                    });
+                    },
+                    closeChat() {
+                        gsap.to(this.panel, {
+                        scale: 0.9,
+                        opacity: 0,
+                        duration: 0.3,
+                        ease: "power2.in",
+                        onComplete: () => {
+                            this.panel.style.display = "none";
+                            this.open = false;
+                            this.showBubble();
+                        }
+                        });
+                    },
+                    hideBubble() {
+                        gsap.to(this.bubble, {
+                        scale: 0.8,
+                        opacity: 0,
+                        duration: 0.2,
+                        onComplete: () => {
+                            this.bubble.style.display = "none";
+                        }
+                        });
+                    },
+                    showBubble() {
+                        this.bubble.style.display = "flex";
+                        gsap.fromTo(this.bubble, { opacity: 0, scale: 0.8 }, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.3,
+                        ease: "back.out(1.7)"
+                        });
+                    }
+                    };
+                }
+                </script>
+
+			{% endif %}
+
+		</main>
+
+	</body>
 </html>

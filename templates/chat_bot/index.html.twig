@@ -1,20 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ChatBotController!{% endblock %}
+{% block title %}GaryBot{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/src/Controller/ChatBotController.php</code></li>
-        <li>Your template at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/templates/chat_bot/index.html.twig</code></li>
-    </ul>
+<div class="h-full w-full flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
+    <div class="p-4 border-b text-xl font-semibold">GaryBot</div>
+    <div id="chatbot-messages" class="p-4 h-96 overflow-y-auto space-y-2">
+      <!-- Messages dynamiques ici -->
+    </div>
+    <div class="border-t p-4 flex gap-2">
+      <input
+        type="text"
+        placeholder="Je suis GaryBot, posez moi vos questions"
+        class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring"
+      />
+      <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        Envoyer
+      </button>
+    </div>
+  </div>
 </div>
+
 {% endblock %}
