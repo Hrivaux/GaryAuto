@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un véhicule{% endblock %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold mb-4">Ajouter un véhicule</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 rounded {{ label == 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.immat) }}
+        <button class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+            Rechercher et enregistrer
+        </button>
+    {{ form_end(form) }}
+{% endblock %}

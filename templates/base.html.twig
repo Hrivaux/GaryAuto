@@ -7,8 +7,10 @@
 </head>
 <body class="flex bg-gray-100 min-h-screen">
 
-    {% include 'partials/sidebar.html.twig' %}
-
+    {% if not sidebar is defined or sidebar %}
+        {% include 'partials/sidebar.html.twig' %}
+    {% endif %}
+    
     <main class="flex-1 p-8">
         {% block body %}{% endblock %}
     </main>
