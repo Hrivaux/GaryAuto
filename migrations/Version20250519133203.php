@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250519125932 extends AbstractMigration
+final class Version20250519133203 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -27,7 +27,7 @@ final class Version20250519125932 extends AbstractMigration
             ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E486A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE user DROP username
+            CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)
         SQL);
     }
 
@@ -41,7 +41,7 @@ final class Version20250519125932 extends AbstractMigration
             DROP TABLE vehicle
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD username VARCHAR(180) NOT NULL
+            DROP INDEX UNIQ_8D93D649F85E0677 ON user
         SQL);
     }
 }
