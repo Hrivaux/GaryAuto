@@ -1,20 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello VehicleController!{% endblock %}
+{% block title %}Mes véhicules{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1 class="text-3xl font-bold mb-6">Mes véhicules</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- BOUTON AJOUT -->
+    <div class="mb-8">
+        <a href="{{ path('app_vehicle_add') }}"
+           class="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 rounded-2xl text-3xl shadow transition">
+            +
+        </a>
+    </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/src/Controller/VehicleController.php</code></li>
-        <li>Your template at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/templates/vehicle/index.html.twig</code></li>
-    </ul>
-</div>
+    <!-- LISTE DES VEHICULES -->
+    <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        {% for vehicle in vehicles %}
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
+                <div class="flex items-center mb-4">
+                    {% if vehicle.logoMarque %}
+                        <img src="{{ vehicle.logoMarque }}" alt="{{ vehicle.marque }}" class="h-12 mr-4">
+                    {% endif %}
+                    <div>
+                        <p class="text-xl font-semibold">{{ vehicle.marque }} {{ vehicle.modele }}</p>
+                        <p class="text-sm text-gray-500">{{ vehicle.immat }}</p>
+                    </div>
+                </div>
+
+                <ul class="text-gray-700 text-sm space-y-1">
+                    <li><strong>Énergie :</strong> {{ vehicle.energie }}</li>
+                    <li><strong>Carrosserie :</strong> {{ vehicle.carrosserie }}</li>
+                    <li><strong>Puissance fiscale :</strong> {{ vehicle.puissanceFiscale }} CV</li>
+                    <li><strong>CO₂ :</strong> {{ vehicle.co2 }} g/km</li>
+                    <li><strong>Date :</strong> {{ vehicle.dateMiseEnCirculation ? vehicle.dateMiseEnCirculation|date('d/m/Y') : '—' }}</li>
+                </ul>
+            </div>
+        {% else %}
+            <p class="text-gray-600">Aucun véhicule enregistré pour le moment.</p>
+        {% endfor %}
+    </div>
 {% endblock %}
