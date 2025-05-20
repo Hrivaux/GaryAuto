@@ -6,13 +6,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/443d22af55.js" crossorigin="anonymous"></script>
 </head>
-<body class="ml-64 h-screen overflow-y-auto flex bg-gray-100 min-h-screen">
+<body class="flex bg-gray-100 min-h-screen">
+    {# Récupère la route active #}
+    {% set currentRoute = app.request.attributes.get('_route') %}
 
-    {% if not sidebar is defined or sidebar %}
+    {# Si on n’est PAS sur la page de login, on affiche la sidebar #}
+    {% set noSidebarRoutes = ['app_login', 'app_register'] %}
+    {% if currentRoute not in noSidebarRoutes  %}
         {% include 'partials/sidebar.html.twig' %}
     {% endif %}
     
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-8 {{ currentRoute not in noSidebarRoutes ? 'ml-64 h-screen overflow-y-auto' : '' }}">
         {% block body %}{% endblock %}
     </main>
 
