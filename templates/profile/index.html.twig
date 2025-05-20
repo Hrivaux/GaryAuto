@@ -1,20 +1,95 @@
+{# templates/profile/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProfileController!{% endblock %}
+{% block title %}Mon Profil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mx-auto px-4 py-12 max-w-2xl">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+  {# ⚡️ Flash messages #}
+  {% for msg in app.flashes('success') %}
+    <div class="mb-6 px-4 py-3 bg-green-100 text-green-800 rounded-lg shadow">
+      {{ msg }}
+    </div>
+  {% endfor %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/src/Controller/ProfileController.php</code></li>
-        <li>Your template at <code>/Users/hugorivaux/Projet_Cours_Dev/GaryAuto/templates/profile/index.html.twig</code></li>
-    </ul>
+  <div class="bg-white shadow-lg rounded-2xl p-8 space-y-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800">Mon Profil</h1>
+
+    {# Avatar preview #}
+    <div class="flex justify-center mb-6">
+      <img
+        id="avatar-preview"
+        src="{% if app.user.avatarName %}
+               {{ asset('/uploads/avatars/' ~ app.user.avatarName) ~ '?v=' ~ app.user.updatedAt.timestamp }}
+             {% else %}
+               {{ asset('/images/default-avatar.png') }}
+             {% endif %}"
+        alt="Avatar"
+        class="w-32 h-32 rounded-full border-4 border-indigo-500 object-cover"
+      />
+    </div>
+
+    {{ form_start(profileForm, { attr: { class: 'space-y-6' } }) }}
+
+      {# Upload field #}
+      <div>
+        {{ form_label(profileForm.avatarFile, 'Changer de photo de profil', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+        {{ form_widget(profileForm.avatarFile, { attr: { class: 'mt-1 block w-full text-sm text-gray-500' } }) }}
+        {{ form_errors(profileForm.avatarFile) }}
+      </div>
+
+      {# Username & Email #}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          {{ form_label(profileForm.username, 'Pseudo', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+          {{ form_widget(profileForm.username, { attr: { class: 'mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500' } }) }}
+          {{ form_errors(profileForm.username) }}
+        </div>
+        <div>
+          {{ form_label(profileForm.email, 'Adresse e-mail', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+          {{ form_widget(profileForm.email, { attr: { class: 'mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500' } }) }}
+          {{ form_errors(profileForm.email) }}
+        </div>
+      </div>
+
+      {# New password #}
+      <div>
+        {{ form_label(profileForm.plainPassword, 'Nouveau mot de passe', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+        {{ form_widget(profileForm.plainPassword, { attr: { class: 'mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500' } }) }}
+        <p class="mt-1 text-xs text-gray-500">Laisse vide pour conserver le mot de passe actuel.</p>
+        {{ form_errors(profileForm.plainPassword) }}
+      </div>
+
+      {# Submit button #}
+      <div>
+        <button
+          type="submit"
+          class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow transition"
+        >
+          Enregistrer
+        </button>
+      </div>
+
+    {{ form_end(profileForm) }}
+
+  </div>
 </div>
+
+{# Preview script #}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.querySelector('input[type="file"][name="{{ profileForm.avatarFile.vars.full_name }}"]');
+    const preview = document.getElementById('avatar-preview');
+    if (!input || !preview) return;
+
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => preview.src = reader.result;
+      reader.readAsDataURL(file);
+    });
+  });
+</script>
 {% endblock %}

@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <title>{% block title %}Mon Projet{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/443d22af55.js" crossorigin="anonymous"></script>
 </head>
-<body class="flex bg-gray-100 min-h-screen">
+<body class="ml-64 h-screen overflow-y-auto flex bg-gray-100 min-h-screen">
 
-    {% include 'partials/sidebar.html.twig' %}
-
+    {% if not sidebar is defined or sidebar %}
+        {% include 'partials/sidebar.html.twig' %}
+    {% endif %}
+    
     <main class="flex-1 p-8">
         {% block body %}{% endblock %}
     </main>
 
+    {# GSAP (via CDN ou ton build) #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
 </body>
 </html>
