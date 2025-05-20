@@ -9,10 +9,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -25,13 +25,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private ?string $username = null;
-
-    #[ORM\Column(type: 'string', length: 180)]
     private ?string $email = null;
 
     /** @var list<string> */
-    #[ORM\Column]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     #[ORM\Column]
@@ -49,6 +46,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $profileComplete = false;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private ?string $phone = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $address = null;
+
     public function __construct()
     {
         $this->vehicles = new ArrayCollection();
@@ -59,18 +71,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): static
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -79,13 +79,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
     public function getUserIdentifier(): string
     {
-        // on utilise l'email comme identifiant principal
+        // l’email sert d’identifiant
         return (string) $this->email;
     }
 
@@ -95,9 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // garantir au moins ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -107,7 +104,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -119,13 +115,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
     public function eraseCredentials(): void
     {
-        // si nécessaire, réinitialiser des données sensibles temporaires ici
+        // …
     }
 
     /**
@@ -142,7 +137,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->vehicles->add($vehicle);
             $vehicle->setUser($this);
         }
-
         return $this;
     }
 
@@ -153,7 +147,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $vehicle->setUser(null);
             }
         }
-
         return $this;
     }
 
@@ -165,7 +158,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarName(?string $avatarName): static
     {
         $this->avatarName = $avatarName;
-
         return $this;
     }
 
@@ -178,10 +170,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->avatarFile = $avatarFile;
         if (null !== $avatarFile) {
-            // force la mise à jour de updatedAt pour déclencher l'upload
             $this->updatedAt = new \DateTimeImmutable();
         }
-
         return $this;
     }
 
@@ -193,41 +183,93 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
-    /**
-     * Sérialisation pour la session : n'inclut que des scalaires
-     *
-     * @return array{ id: int|null, email: string|null, password: string|null, roles: list<string>, username: string|null, avatarName: string|null, updatedAt: string|null }
-     */
+    public function isProfileComplete(): bool
+    {
+        return $this->profileComplete;
+    }
+
+    public function setProfileComplete(bool $profileComplete): static
+    {
+        $this->profileComplete = $profileComplete;
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): static
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): static
+    {
+        $this->address = $address;
+        return $this;
+    }
+
     public function __serialize(): array
     {
         return [
-            'id'         => $this->id,
-            'email'      => $this->email,
-            'password'   => $this->password,
-            'roles'      => $this->roles,
-            'username'   => $this->username,
+            'id' => $this->id,
+            'email' => $this->email,
+            'password' => $this->password,
+            'roles' => $this->roles,
             'avatarName' => $this->avatarName,
-            'updatedAt'  => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+            'profileComplete' => $this->profileComplete,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'phone' => $this->phone,
+            'address' => $this->address,
         ];
     }
 
-    /**
-     * Reconstitution de l'objet depuis la session
-     *
-     * @param array{ id: int|null, email: string|null, password: string|null, roles: list<string>, username: string|null, avatarName: string|null, updatedAt: string|null } $data
-     */
     public function __unserialize(array $data): void
     {
-        $this->id         = $data['id'];
-        $this->email      = $data['email'];
-        $this->password   = $data['password'];
-        $this->roles      = $data['roles'];
-        $this->username   = $data['username'];
+        $this->id = $data['id'];
+        $this->email = $data['email'];
+        $this->password = $data['password'];
+        $this->roles = $data['roles'];
         $this->avatarName = $data['avatarName'];
-        $this->updatedAt  = isset($data['updatedAt']) ? new \DateTimeImmutable($data['updatedAt']) : null;
+        $this->updatedAt = isset($data['updatedAt']) ? new \DateTimeImmutable($data['updatedAt']) : null;
+        $this->profileComplete = $data['profileComplete'];
+        $this->firstName = $data['firstName'];
+        $this->lastName = $data['lastName'];
+        $this->phone = $data['phone'];
+        $this->address = $data['address'];
     }
 }
