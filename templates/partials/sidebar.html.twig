@@ -2,8 +2,15 @@
 {% set paramUser = app.user ? app.user.parametreUser : null %}
 {% set activeColor = paramUser and paramUser.siteColor ? paramUser.siteColor : '#1f2937' %}
 {% set logo = paramUser and paramUser.logoUrl ? paramUser.logoUrl : asset('assets/img/main-logo.png') %}
-{% set btnStyle = paramUser and paramUser.buttonStyle == 'rounded' ? 'rounded-xl' : (paramUser.buttonStyle == 'flat' ? 'rounded-none' : 'border border-gray-300') %}
-
+{% set style = paramUser ? paramUser.buttonStyle : 'rounded' %}
+{% set btnStyle = style == 'rounded' 
+    ? 'rounded-xl' 
+    : (style == 'flat' 
+        ? 'rounded-none' 
+        : 'border border-gray-300') %}
+{% set paramUser = app.user and app.user.parametreUser is defined ? app.user.parametreUser : null %}
+<html lang="fr" class="{{ paramUser and paramUser.darkMode ? 'dark' : '' }}">
+    
 <aside class="fixed top-0 left-0 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white/80 backdrop-blur border-r rtl:border-r-0 rtl:border-l dark:bg-gray-100/10 dark:border-gray-700">
     <!-- Logo -->
     <a href="{{ path('app_dashboard') }}" class="flex items-center justify-center mb-6">

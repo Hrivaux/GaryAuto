@@ -62,7 +62,7 @@ class ParametreUser
         return $this->siteColor;
     }
 
-    public function setSiteColor(string $siteColor): self
+    public function setSiteColor(?string $siteColor): self
     {
         $this->siteColor = $siteColor;
         return $this;
