@@ -15,6 +15,9 @@
     {% if currentRoute not in noSidebarRoutes  %}
         {% include 'partials/sidebar.html.twig' %}
     {% endif %}
+     {% if app.request.pathinfo != '/garyBot' and app.user %}
+         {% include 'components/gary_bot_popup.html.twig' %}
+     {% endif %}
     
     <main class="flex-1 p-8 {{ currentRoute not in noSidebarRoutes ? 'ml-64 h-screen overflow-y-auto' : '' }}">
         {% block body %}{% endblock %}
@@ -22,5 +25,4 @@
 
     {# GSAP (via CDN ou ton build) #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-</body>
 </html>
