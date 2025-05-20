@@ -1,27 +1,53 @@
-<aside class="w-64 bg-white shadow-md p-4 flex flex-col space-y-6 min-h-screen">
-    <div class="text-2xl font-semibold text-gray-800">
-        MonProjet
+<aside class="fixed top-0 left-0 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+    <a href="{{ path('app_dashboard') }}" class="flex items-center justify-center">
+        <img class="size-20" src="{{ asset('assets/img/main-logo.png') }}" alt="">
+    </a>
+
+    <div class="flex flex-col justify-between flex-1 mt-6">
+        <nav>
+            <a class="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-md dark:bg-gray-800 dark:text-gray-200" href="{{ path('app_dashboard') }}">
+                <i class="fa-solid fa-house"></i>
+
+                <span class="mx-4 font-medium">Accueil</span>
+            </a>
+
+            <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{ path('app_vehicle') }}">
+                <i class="fa-solid fa-car w-5 text-center"></i>
+
+                <span class="mx-4 font-medium">Mes véhicules</span>
+            </a>
+
+            <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{ path('app_chat_bot') }}">
+                <i class="fa-solid fa-robot"></i>
+
+                <span class="mx-4 font-medium">GaryBot</span>
+            </a>
+
+            <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="#">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span class="mx-4 font-medium">Informations</span>
+            </a>
+
+            <hr class="my-6 border-gray-200 dark:border-gray-600" />
+
+            <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="#">
+                <i class="fa-solid fa-gears"></i>
+
+                <span class="mx-4 font-medium">Paramètres</span>
+            </a>
+        </nav>
+
+        <div class="flex items-center justify-between mt-6">
+                <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{ path('app_profile') }}">
+                    <i class="fa-solid fa-user"></i>
+
+                    <span class="mx-4 font-medium">Mon profil</span>
+                </a>
+                
+                <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{ path('app_logout') }}">
+                    <i class="fa-solid fa-right-from-bracket my-1"></i>
+                </a>
+            </div>
     </div>
-
-    <nav class="flex flex-col space-y-3 text-gray-700">
-        <a href="{{ path('app_dashboard') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
-            🏠 Dashboard
-        </a>
-        <a href="{{ path('app_profile') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
-            👤 Profil
-        </a>
-        <a href="{{ path('app_admin') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
-            🛠️ Administration
-        </a>
-        <a href="{{ path('app_chat_bot') }}" class="mt-auto hover:bg-gray-100 rounded px-3 py-2 transition">
-            🐌 GaryBot
-        </a>
-        <a href="{{ path('app_vehicle') }}" class="hover:bg-gray-100 rounded px-3 py-2 transition">
-            🚗 Mes véhicules
-        </a>
-        <a href="{{ path('app_logout') }}" class="mt-auto hover:bg-red-100 text-red-600 rounded px-3 py-2 transition">
-            🔓 Déconnexion
-        </a>
-
-    </nav>
 </aside>
