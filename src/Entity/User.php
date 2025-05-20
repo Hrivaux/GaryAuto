@@ -272,4 +272,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->phone = $data['phone'];
         $this->address = $data['address'];
     }
+
+    #[OneToOne(mappedBy: "user", targetEntity: ParametreUser::class, cascade: ["persist", "remove"])]
+        private ?ParametreUser $parametreUser = null;
+
+        public function getParametreUser(): ?ParametreUser
+        {
+            return $this->parametreUser;
+        }
+
+        public function setParametreUser(?ParametreUser $parametreUser): self
+        {
+            $this->parametreUser = $parametreUser;
+            return $this;
+        }
 }
