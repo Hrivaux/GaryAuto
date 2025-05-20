@@ -4,23 +4,190 @@
 
 {% block body %}
 
-<div class="h-full w-full flex flex-col items-center justify-center p-4">
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+
+<div x-data="chatUI()" x-init="init()" class="h-full w-full flex flex-col items-center justify-center p-4">
   <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
-    <div class="p-4 border-b text-xl font-semibold">GaryBot</div>
-    <div id="chatbot-messages" class="p-4 h-96 overflow-y-auto space-y-2">
-      <!-- Messages dynamiques ici -->
+
+    <div class="p-4 border-b flex items-center justify-between">
+      <div class="text-xl font-semibold">🐌 GaryBot</div>
+      <button
+        x-show="hasSent"
+        x-ref="resetBtn"
+        @click="hideButtonAndReset"
+        class="flex items-center gap-2 text-sm text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full shadow-sm hover:bg-red-100 hover:text-red-700 transition"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span>Retour au menu</span>
+      </button>
     </div>
+
+    <template x-if="!hasSent">
+      <div class="p-4 border-b bg-white text-gray-600 text-sm">
+        Bonjour 👋, je suis GaryBot, votre assistant pour l’entretien automobile.
+        Sélectionnez une question fréquente ou posez votre propre question ci-dessous !
+      </div>
+    </template>
+
+    <template x-if="!hasSent">
+      <div class="p-4 space-y-4 border-t bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-700">Questions fréquemment posées</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            class="suggestion-card bg-white border hover:border-blue-400 rounded-xl p-4 shadow-sm transition cursor-pointer"
+            @click="animateInput('Révision et entretien périodique')"
+          >
+            <h3 class="font-medium text-gray-800">🔧 Révision et entretien</h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Conseils sur les révisions constructeur, filtres, vidanges…
+            </p>
+          </div>
+
+          <div
+            class="suggestion-card bg-white border hover:border-blue-400 rounded-xl p-4 shadow-sm transition cursor-pointer"
+            @click="animateInput('Changement des plaquettes et disques de frein')"
+          >
+            <h3 class="font-medium text-gray-800">🛞 Freins</h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Infos sur les plaquettes, disques, durée de vie, symptômes d’usure.
+            </p>
+          </div>
+
+          <div
+            class="suggestion-card bg-white border hover:border-blue-400 rounded-xl p-4 shadow-sm transition cursor-pointer"
+            @click="animateInput('Contrôle et recharge de la climatisation')"
+          >
+            <h3 class="font-medium text-gray-800">❄️ Climatisation</h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Quand faire la recharge ? Contrôle d’étanchéité ?
+            </p>
+          </div>
+
+          <div
+            class="suggestion-card bg-white border hover:border-blue-400 rounded-xl p-4 shadow-sm transition cursor-pointer"
+            @click="animateInput('Remplacement de la batterie')"
+          >
+            <h3 class="font-medium text-gray-800">🔋 Batterie</h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Signes de faiblesse, durée de vie, type de batterie adapté.
+            </p>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Zone messages -->
+    <div x-show="hasSent" id="chatbot-messages" class="p-4 h-80 overflow-y-auto space-y-2 flex flex-col">
+    </div>
+
     <div class="border-t p-4 flex gap-2">
       <input
+        x-ref="userInput"
+        x-model="userMessage"
         type="text"
         placeholder="Je suis GaryBot, posez moi vos questions"
         class="flex-1 border rounded-lg p-2 focus:outline-none focus:ring"
       />
-      <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+      <button
+        @click="sendMessage"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+      >
         Envoyer
       </button>
     </div>
+
   </div>
 </div>
+
+<script>
+  function chatUI() {
+    return {
+      userMessage: '',
+      hasSent: false,
+
+      init() {
+        gsap.from(".suggestion-card", {
+          opacity: 0,
+          y: 30,
+          stagger: 0.1,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+      },
+
+      animateInput(text) {
+        const input = this.$refs.userInput;
+        this.userMessage = '';
+
+        let i = 0;
+        const interval = setInterval(() => {
+          this.userMessage += text[i];
+          i++;
+          if (i >= text.length) clearInterval(interval);
+        }, 20);
+
+        input.focus();
+      },
+
+      sendMessage() {
+        if (!this.userMessage.trim()) return;
+
+        this.hasSent = true;
+        const chatbox = document.getElementById('chatbot-messages');
+
+        const msgEl = document.createElement('div');
+        msgEl.className = 'bg-blue-100 p-2 rounded-xl max-w-sm self-end';
+        msgEl.innerText = this.userMessage;
+        msgEl.style.opacity = 0;
+        msgEl.style.transform = 'scale(0.9)';
+        chatbox.appendChild(msgEl);
+
+        gsap.to(msgEl, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.7)" });
+
+        const messageText = this.userMessage;
+        this.userMessage = '';
+
+        setTimeout(() => {
+          chatbox.scrollTop = chatbox.scrollHeight;
+        }, 100);
+
+        setTimeout(() => {
+          const botEl = document.createElement('div');
+          botEl.className = 'bg-gray-100 p-2 rounded-xl max-w-sm self-start';
+          botEl.innerText = `GaryBot : je traite votre demande "${messageText}"...`;
+          botEl.style.opacity = 0;
+          botEl.style.transform = 'translateY(10px)';
+          chatbox.appendChild(botEl);
+
+          gsap.to(botEl, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out"
+          });
+
+          chatbox.scrollTop = chatbox.scrollHeight;
+        }, 700);
+      },
+
+      hideButtonAndReset() {
+        this.$refs.resetBtn.style.display = 'none';
+        this.resetChat();
+      },
+
+      resetChat() {
+        this.hasSent = false;
+        this.userMessage = '';
+        const chatbox = document.getElementById('chatbot-messages');
+        chatbox.innerHTML = '';
+        this.$refs.userInput.focus();
+      }
+    }
+  }
+</script>
 
 {% endblock %}
