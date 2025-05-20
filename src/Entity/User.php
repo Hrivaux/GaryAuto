@@ -58,12 +58,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $address = null;
+    // Embed Address value object instead of a raw string
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
 
     public function __construct()
     {
         $this->vehicles = new ArrayCollection();
+        $this->address = new Address();
     }
 
     public function getId(): ?int
@@ -84,7 +86,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        // l’email sert d’identifiant
         return (string) $this->email;
     }
 
@@ -230,12 +231,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function setAddress(?string $address): static
+    public function setAddress(Address $address): static
     {
         $this->address = $address;
         return $this;
@@ -254,7 +255,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'firstName' => $this->firstName,
             'lastName' => $this->lastName,
             'phone' => $this->phone,
-            'address' => $this->address,
+            // store address as array
+            'address' => [
+                'street' => $this->address->getStreet(),
+                'postalCode' => $this->address->getPostalCode(),
+                'city' => $this->address->getCity(),
+                'country' => $this->address->getCountry(),
+            ],
         ];
     }
 
@@ -270,6 +277,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->firstName = $data['firstName'];
         $this->lastName = $data['lastName'];
         $this->phone = $data['phone'];
-        $this->address = $data['address'];
+        $addr = $data['address'] ?? [];
+        $this->address = new Address(
+            $addr['street'] ?? '',
+            $addr['postalCode'] ?? '',
+            $addr['city'] ?? '',
+            $addr['country'] ?? ''
+        );
     }
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: ParametreUser::class, cascade: ['persist', 'remove'])]
+private ?ParametreUser $parametreUser = null;
+
+public function getParametreUser(): ?ParametreUser
+{
+    return $this->parametreUser;
+}
+
+public function setParametreUser(?ParametreUser $parametreUser): self
+{
+    $this->parametreUser = $parametreUser;
+    return $this;
+}
+
 }

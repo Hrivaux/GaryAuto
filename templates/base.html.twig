@@ -1,28 +1,35 @@
 <!DOCTYPE html>
-<html lang="fr">
+{% set paramUser = app.user and app.user.parametreUser is defined ? app.user.parametreUser : null %}
+<html lang="fr" class="{{ paramUser and paramUser.darkMode ? 'dark' : '' }}">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Mon Projet{% endblock %}</title>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/443d22af55.js" crossorigin="anonymous"></script>
 </head>
-<body class="flex bg-gray-100 min-h-screen">
-    {# Récupère la route active #}
-    {% set currentRoute = app.request.attributes.get('_route') %}
 
-    {# Si on n’est PAS sur la page de login, on affiche la sidebar #}
+<body class="flex bg-gray-100 min-h-screen dark:bg-gray-900">
+    {% set currentRoute = app.request.attributes.get('_route') %}
     {% set noSidebarRoutes = ['app_login', 'app_register'] %}
-    {% if currentRoute not in noSidebarRoutes  %}
+
+    {% if currentRoute not in noSidebarRoutes %}
         {% include 'partials/sidebar.html.twig' %}
     {% endif %}
-     {% if app.request.pathinfo != '/garyBot' and app.user %}
-         {% include 'components/gary_bot_popup.html.twig' %}
-     {% endif %}
-    
+
+    {% if app.request.pathinfo != '/garyBot' and app.user %}
+        {% include 'components/gary_bot_popup.html.twig' %}
+    {% endif %}
+
     <main class="flex-1 p-8 {{ currentRoute not in noSidebarRoutes ? 'ml-64 h-screen overflow-y-auto' : '' }}">
         {% block body %}{% endblock %}
     </main>
 
-    {# GSAP (via CDN ou ton build) #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+</body>
 </html>

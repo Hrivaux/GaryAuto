@@ -1,54 +1,65 @@
 {% set currentRoute = app.request.attributes.get('_route') %}
-<aside class="fixed top-0 left-0 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
-    <a href="{{ path('app_dashboard') }}" class="flex items-center justify-center">
-        <img class="size-20" src="{{ asset('assets/img/main-logo.png') }}" alt="">
+{% set paramUser = app.user ? app.user.parametreUser : null %}
+{% set activeColor = paramUser and paramUser.siteColor ? paramUser.siteColor : '#1f2937' %}
+{% set logo = paramUser and paramUser.logoUrl ? paramUser.logoUrl : asset('assets/img/main-logo.png') %}
+{% set style = paramUser ? paramUser.buttonStyle : 'rounded' %}
+{% set btnStyle = style == 'rounded' 
+    ? 'rounded-xl' 
+    : (style == 'flat' 
+        ? 'rounded-none' 
+        : 'border border-gray-300') %}
+{% set paramUser = app.user and app.user.parametreUser is defined ? app.user.parametreUser : null %}
+<html lang="fr" class="{{ paramUser and paramUser.darkMode ? 'dark' : '' }}">
+    
+<aside class="fixed top-0 left-0 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white/80 backdrop-blur border-r rtl:border-r-0 rtl:border-l dark:bg-gray-100/10 dark:border-gray-700">
+    <!-- Logo -->
+    <a href="{{ path('app_dashboard') }}" class="flex items-center justify-center mb-6">
+        <img class="h-20 w-auto object-contain" src="{{ logo }}" alt="Logo">
     </a>
 
-    <div class="flex flex-col justify-between flex-1 mt-6">
-        <nav>
-            <a class="flex items-center px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_dashboard' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="{{ path('app_dashboard') }}">
-                <i class="fa-solid fa-house"></i>
+    <!-- Navigation -->
+    <div class="flex flex-col justify-between flex-1">
+        <nav class="space-y-3">
+            {% set links = [
+                { path: 'app_dashboard', icon: 'fa-house', label: 'Accueil' },
+                { path: 'app_vehicle', icon: 'fa-car', label: 'Mes véhicules' },
+                { path: 'app_chat_bot', icon: 'fa-robot', label: 'GaryBot' },
+                { path: 'app_entretien', icon: 'fa-circle-info', label: 'Informations' },
+                { path: 'app_parametre', icon: 'fa-gears', label: 'Paramètres' }
+            ] %}
 
-                <span class="mx-4 font-medium">Accueil</span>
-            </a>
-
-            <a class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_vehicle' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="{{ path('app_vehicle') }}">
-                <i class="fa-solid fa-car w-5 text-center"></i>
-
-                <span class="mx-4 font-medium">Mes véhicules</span>
-            </a>
-
-            <a class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_chat_bot' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="{{ path('app_chat_bot') }}">
-                <i class="fa-solid fa-robot"></i>
-
-                <span class="mx-4 font-medium">GaryBot</span>
-            </a>
-
-            <a class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_info' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="#">
-                <i class="fa-solid fa-circle-info"></i>
-
-                <span class="mx-4 font-medium">Informations</span>
-            </a>
-
-            <hr class="my-6 border-gray-200 dark:border-gray-600" />
-
-            <a class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_settings' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="#">
-                <i class="fa-solid fa-gears"></i>
-
-                <span class="mx-4 font-medium">Paramètres</span>
-            </a>
+            {% for link in links %}
+                {% set isActive = currentRoute == link.path %}
+                <a href="{{ path(link.path) }}"
+                   class="flex items-center gap-3 px-4 py-2 transition duration-200 {{ btnStyle }} 
+                          {{ isActive 
+                              ? 'text-white' 
+                              : 'text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white' }} 
+                          {{ isActive 
+                              ? 'bg-[' ~ activeColor ~ ']' 
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                    <i class="fa-solid {{ link.icon }}"></i>
+                    <span class="font-medium">{{ link.label }}</span>
+                </a>
+            {% endfor %}
         </nav>
 
-        <div class="flex items-center justify-between mt-6">
-                <a class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 {{ currentRoute == 'app_profile' ? 'bg-gray-800 text-gray-200' : 'text-gray-400' }}" href="{{ path('app_profile') }}">
-                    <i class="fa-solid fa-user"></i>
+        <!-- Footer links -->
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6 space-y-2">
+            <a href="{{ path('app_profile') }}"
+               class="flex items-center gap-3 px-4 py-2 transition duration-200 {{ btnStyle }}
+                      {{ currentRoute == 'app_profile' 
+                          ? 'text-white bg-[' ~ activeColor ~ ']' 
+                          : 'text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                <i class="fa-solid fa-user"></i>
+                <span class="font-medium">Mon profil</span>
+            </a>
 
-                    <span class="mx-4 font-medium">Mon profil</span>
-                </a>
-                
-                <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{ path('app_logout') }}">
-                    <i class="fa-solid fa-right-from-bracket my-1"></i>
-                </a>
-            </div>
+            <a href="{{ path('app_logout') }}"
+               class="flex items-center gap-3 px-4 py-2 transition duration-200 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-800 {{ btnStyle }}">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="font-medium">Déconnexion</span>
+            </a>
+        </div>
     </div>
 </aside>
