@@ -102,11 +102,31 @@ public function index(Request $request, VehicleRepository $vehicleRepository, Ht
     }
 
     $vehicles = $vehicleRepository->findBy(['user' => $this->getUser()]);
+    $missingKm = array_filter($vehicles, fn($v) => $v->getKilometres() === null);
+
 
     return $this->render('vehicle/index.html.twig', [
         'vehicles' => $vehicles,
         'form' => $form->createView(),
+        'missingKm' => $missingKm,
     ]);
 }
+
+#[Route('/vehicle/{id}/update-km', name: 'app_vehicle_update_km', methods: ['POST'])]
+public function updateKm(Request $request, Vehicle $vehicle, EntityManagerInterface $em): Response
+{
+    $kilometres = (int) $request->request->get('kilometres');
+
+    if ($kilometres > 0) {
+        $vehicle->setKilometres($kilometres);
+        $em->flush();
+        $this->addFlash('success', 'Kilométrage mis à jour avec succès.');
+    } else {
+        $this->addFlash('error', 'Le kilométrage doit être supérieur à 0.');
+    }
+
+    return $this->redirectToRoute('app_vehicle');
+}
+
 
 }

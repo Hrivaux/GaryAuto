@@ -62,6 +62,9 @@ class Vehicle
     #[ORM\Column(length: 30, nullable: true)]
     private ?string $couleur = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $kilometres = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logoMarque = null;
 
@@ -266,6 +269,19 @@ class Vehicle
 
         return $this;
     }
+
+    public function getKilometres(): ?int
+    {
+        return $this->kilometres;
+    }
+
+    public function setKilometres(?int $kilometres): self
+    {
+        $this->kilometres = $kilometres;
+        
+        return $this;
+    }
+
 
     public function getUser(): ?User
     {
