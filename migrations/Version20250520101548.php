@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250520091456 extends AbstractMigration
+final class Version20250520101548 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -41,12 +41,6 @@ final class Version20250520091456 extends AbstractMigration
         $this->addSql(<<<'SQL'
             ALTER TABLE chat_message ADD CONSTRAINT FK_FAB3FC16613FECDF FOREIGN KEY (session_id) REFERENCES chat_session (id)
         SQL);
-        $this->addSql(<<<'SQL'
-            DROP INDEX UNIQ_8D93D649E7927C74 ON user
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE user DROP profile_complete, DROP first_name, DROP last_name, DROP phone, DROP address
-        SQL);
     }
 
     public function down(Schema $schema): void
@@ -72,12 +66,6 @@ final class Version20250520091456 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE service
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD profile_complete TINYINT(1) NOT NULL, ADD first_name VARCHAR(100) DEFAULT NULL, ADD last_name VARCHAR(100) DEFAULT NULL, ADD phone VARCHAR(20) DEFAULT NULL, ADD address VARCHAR(255) DEFAULT NULL
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON user (email)
         SQL);
     }
 }
